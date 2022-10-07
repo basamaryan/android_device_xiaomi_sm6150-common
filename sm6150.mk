@@ -175,6 +175,7 @@ PRODUCT_COPY_FILES += \
 
 # Overlay
 PRODUCT_PACKAGES += \
+    AOSPAXiaomiSM6150FrameworksOverlay \
     XiaomiSM6150FrameworksOverlay \
     XiaomiSM6150SettingsOverlay \
     XiaomiSM6150SettingsProviderOverlay \
