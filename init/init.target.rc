@@ -135,6 +135,9 @@ on property:sys.boot_completed=1
     write /sys/block/sde/queue/nr_requests 128
     write /sys/block/sde/queue/iostats 1
 
+    # Start custom post_boot script
+    start xiaomi_sm6150-post-boot
+
 service vendor.pd_mapper /vendor/bin/pd-mapper
     class core
     user system
@@ -193,3 +196,22 @@ service vendor.nv_mac /vendor/bin/nv_mac
     user system
     group system inet net_admin wifi net_raw
     oneshot
+
+service xiaomi_sm6150-post-boot /vendor/bin/sh /vendor/bin/init.xiaomi_sm6150.post_boot.sh
+    class core
+    user root
+    group root system wakelock graphics
+    disabled
+    oneshot
+
+service vendor.audio-hal /vendor/bin/hw/android.hardware.audio.service
+    override
+    class hal
+    user audioserver
+    # media gid needed for /dev/fm (radio) and for /data/misc/media (tee)
+    group audio camera drmrpc inet media mediadrm net_bt net_bt_admin net_bw_acct oem_2901 wakelock
+    capabilities BLOCK_SUSPEND
+    ioprio rt 4
+    task_profiles ProcessCapacityHigh HighPerformance
+    socket audio_hw_socket seqpacket 0666 system system
+    onrestart restart audioserver
